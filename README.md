@@ -96,7 +96,13 @@ To list all created customers from Finicity.
 Using the `customer_id` you just got after you add the customer.
 
     Finicity::Client.scope(customer_id).delete
-    
+
+#### Refresh customer accounts (non-interactive)
+Tells finicity to go and fetch transactions. If there is a problem due to credentials or MFA, it will fail with a
+specific status code. See [aggregation codes](https://community.finicity.com/s/article/201750879-Error-and-Aggregation-Status-Codes).
+
+    Finicity::Client.scope(customer_id).customer.refresh
+
 ### 3. Accounts
 #### Discover and add all accounts
 To discover & add the accounts into your customer, you've to authenticate it using the `institution#login_credentials`.
@@ -104,7 +110,7 @@ To discover & add the accounts into your customer, you've to authenticate it usi
     institution_id = 101732
     credentials = [{id: 101732001, name: "Banking Userid", value: "Azzurrio"}, { id: "101732002", name: "Banking Password", value: "LetMePass"]
     Finicity::Client.scope(customer_id).account.add_all(institution_id, credentials)
-    
+
 #### Discover and add all accounts (with MFA)
 In case you get a MFA required. You can submit the answer into `add_all_mfa`. The `mfa_session` will be provided in `add_all` response headers.
 
@@ -114,38 +120,38 @@ In case you get a MFA required. You can submit the answer into `add_all_mfa`. Th
     response.body.questions # [{ text: "What's your super hero?" }]
     answers = [{ text: "What's your super hero?", answer: "Batman" }]
     Finicity::Client.scope(customer_id).account.add_all_mfa(institution_id, mfa_sessiom, answers)
-    
+
 #### List accounts
- 
+
     Finicity::Client.scope(customer_id).account.list
-    
+
 #### Get specific account
- 
+
     Finicity::Client.scope(customer_id).account.get("236534") # using account id
 
 #### Delete specific account
- 
+
     Finicity::Client.scope(customer_id).account.delete(account_id)
- 
+
 #### Refresh accounts
 After adding the accounts you have to refresh them so you can have access into their transactions.
 
     Finicity::Client.scope(customer_id).account.refresh(institution_login_id)
- 
+
 #### Refresh accounts (with MFA)
 In case you get MFA, just like `as add_all_mfa`
 
     Finicity::Client.scope(customer_id).account.refresh(institution_login_id, mfa_session, answers)
- 
+
 #### Activate accounts
 Sometimes you get accounts with type `unknown`, so you need to activate those accounts with the correct types.
-    
+
     accounts = [{id: 12412, type: "savings"}, {id: 15434, type: "creditCard"}]
     Finicity::Client.scope(customer_id).account.activate(institution_id, accounts)
-    
+
 #### Update account credentials
 In case account credentials have been changed, you can you get credentials and update them after populating the values correct credentials.
-    
+
     Finicity::Client.scope(customer_id).account.credentials(account_id) # To be used for updating credentials
     Finicity::Client.scope(customer_id).account.update_credentials(account_id, credentials)
 
@@ -159,7 +165,7 @@ This one will get all transactions for the given customer. You have to specify t
 In case you only need transactions for specific account. You have to provide the `account_id` as extra parameter.
 
     Finicity::Client.scope(customer_id).transaction.list_for_account(account_id, from: 6.months.ago, to: Date.today)
-    
+
 #### Load historic transactions
 This's a feature in Finicity API which gives you the ability to access +6 months transactions. This could be only used per account and it's an interactive request, which means MFA challenge could be appeared.
 
