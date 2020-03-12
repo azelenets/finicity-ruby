@@ -129,6 +129,10 @@ In case you get a MFA required. You can submit the answer into `add_all_mfa`. Th
 
     Finicity::Client.scope(customer_id).account.get("236534") # using account id
 
+#### Get latest statement for specific account
+
+    Finicity::Client.scope(customer_id).statement.get_latest(account_id)
+
 #### Delete specific account
 
     Finicity::Client.scope(customer_id).account.delete(account_id)

@@ -4,6 +4,7 @@ require 'finicity/resources/consumer'
 require 'finicity/resources/customer'
 require 'finicity/resources/account'
 require 'finicity/resources/transaction'
+require 'finicity/resources/statement'
 
 module Finicity
   class Client
@@ -35,6 +36,10 @@ module Finicity
 
     def transaction
       @transaction ||= Finicity::Resources::Transaction.new(customer_id)
+    end
+
+    def statement
+      @statement ||= Finicity::Resources::Statement.new(customer_id)
     end
 
     protected
