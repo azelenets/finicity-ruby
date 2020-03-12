@@ -32,4 +32,9 @@ describe Finicity::Client do
     it { expect(subject.transaction).to be_instance_of(Finicity::Resources::Transaction) }
     it { expect(subject.transaction.customer_id).to eq(customer_id) }
   end
+
+  describe "#statement" do
+    it { expect(subject.statement).to be_instance_of(Finicity::Resources::Statement) }
+    it { expect(subject.statement.customer_id).to eq(customer_id) }
+  end
 end
