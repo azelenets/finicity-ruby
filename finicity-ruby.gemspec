@@ -39,6 +39,7 @@ Gem::Specification.new do |s|
     "lib/finicity/resources/consumer.rb".freeze,
     "lib/finicity/resources/customer.rb".freeze,
     "lib/finicity/resources/institution.rb".freeze,
+    "lib/finicity/resources/statement.rb".freeze,
     "lib/finicity/resources/transaction.rb".freeze,
     "lib/finicity/version.rb".freeze
   ]

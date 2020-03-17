@@ -13,6 +13,15 @@ module Finicity
           request(*args)
         end
 
+        def request_download(*args)
+          response = super(*args)
+
+          return response if response.code != '401'
+
+          app_token.refresh
+          request_download(*args)
+        end
+
         protected
 
         def invalid_app_token?(response)

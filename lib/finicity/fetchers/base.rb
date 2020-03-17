@@ -1,5 +1,6 @@
 require 'httparty'
 require 'rack/mime'
+require 'net/http'
 
 module Finicity
   module Fetchers
@@ -25,6 +26,17 @@ module Finicity
           end
         end
 
+        def request_download(endpoint)
+          tries = 0
+          loop do
+            begin
+              break fetch_download(endpoint)
+            rescue Net::ReadTimeout, Errno::ECONNREFUSED, Net::OpenTimeout => e
+              raise e if (tries += 1) > Finicity.configs.max_retries.to_i
+            end
+          end
+        end
+
         protected
 
         def fetch(method, endpoint, opts)
@@ -43,6 +55,20 @@ module Finicity
             body: parse_json(response.body),
             headers: response.headers
           )
+        end
+
+        def fetch_download(endpoint)
+          uri = URI(endpoint)
+          Net::HTTP.start(uri.host, uri.port, :use_ssl => true) do |http|
+            req = Net::HTTP::Get.new(uri)
+
+            req['Finicity-App-Key'] = Finicity.configs.app_key
+            req['Finicity-App-Token'] = ::Finicity::Fetchers::Token.get
+            req['Content-Type'] = Rack::Mime::MIME_TYPES['.json']
+            req['Accept'] = Rack::Mime::MIME_TYPES['.json']
+
+            http.request(req)
+          end
         end
 
         def normalize_request_options(opts)
